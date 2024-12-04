@@ -9,16 +9,15 @@ const int motorRightPin1 = 5; // Right motor IN1
 const int motorRightPin2 = 6; // Right motor IN2
 const int enablePin = 11;     // Enable pin for both motors
 
-// Threshold distance (in centimeters)
-const int thresholdDistance = 10;
+// Control pins for manual movement
+const int forwardPin = 2;  // Forward
+const int leftPin = 7;     // Left
+const int rightPin = 12;   // Right
+const int backwardPin = 13; // Backward
 
 void setup() {
   // Initialize serial communication
   Serial.begin(9600);
-
-  // Set ultrasonic sensor pins
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
 
   // Set motor control pins
   pinMode(motorLeftPin1, OUTPUT);
@@ -27,45 +26,31 @@ void setup() {
   pinMode(motorRightPin2, OUTPUT);
   pinMode(enablePin, OUTPUT);
 
-  // Enable motors
-  analogWrite(enablePin, 255); // Full speed
+  // Set control pins for manual movement
+  pinMode(forwardPin, INPUT_PULLUP);
+  pinMode(leftPin, INPUT_PULLUP);
+  pinMode(rightPin, INPUT_PULLUP);
+  pinMode(backwardPin, INPUT_PULLUP);
+
+  
+  
 }
 
 void loop() {
-  // Measure distance
-  long duration = getDistance();
-  int distance = duration * 0.034 / 2; // Convert to centimeters
-
-  // Print distance for debugging
-  Serial.print("Distance: ");
-  Serial.print(distance);
-  Serial.println(" cm");
-
-  // Control motor based on distance
-  if (distance <= thresholdDistance) {
-    stopMotors();
-    delay(1000); // Pause before moving backward
-    goBackward();
-    delay(1000); // Move backward for 1 second
-    turnRight(); // Turn right to avoid obstacle
-    delay(500);
-  } else {
+  // Manual control using input pins
+  if (digitalRead(forwardPin) == LOW) {
     goForward();
+  } else if (digitalRead(leftPin) == LOW) {
+    turnLeft();
+  } else if (digitalRead(rightPin) == LOW) {
+    turnRight();
+  } else if (digitalRead(backwardPin) == LOW) {
+    goBackward();
+  } else {
+    stopMotors(); // Stop the motors when no button is pressed
   }
 
   delay(100); // Small delay for stability
-}
-
-long getDistance() {
-  // Send a 10-microsecond pulse to trigger pin
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-
-  // Measure the time for the echo to return
-  return pulseIn(echoPin, HIGH);
 }
 
 // Motor control functions
