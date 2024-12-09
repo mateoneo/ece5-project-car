@@ -32,12 +32,14 @@ void setup() {
   pinMode(rightPin, INPUT_PULLUP);
   pinMode(backwardPin, INPUT_PULLUP);
 
-  
+   // Enable the motor driver
+  digitalWrite(enablePin, HIGH); // Ensure motors can run
   
 }
 
 void loop() {
   // Manual control using input pins
+  // Created so the second esp 32 board can control the motors.
   if (digitalRead(forwardPin) == LOW) {
     goForward();
   } else if (digitalRead(leftPin) == LOW) {
@@ -60,28 +62,28 @@ void stopMotors() {
   digitalWrite(motorRightPin1, LOW);
   digitalWrite(motorRightPin2, LOW);
 }
-
+// method that makes the car go forward
 void goForward() {
   digitalWrite(motorLeftPin1, HIGH);
   digitalWrite(motorLeftPin2, LOW);
   digitalWrite(motorRightPin1, HIGH);
   digitalWrite(motorRightPin2, LOW);
 }
-
+//method that makes the car go backward
 void goBackward() {
   digitalWrite(motorLeftPin1, LOW);
-  digitalWrite(motorLeftPin2, HIGH);
+  digitalWrite(motorLeftPin2, HIGH); //reverses the left motor
   digitalWrite(motorRightPin1, LOW);
-  digitalWrite(motorRightPin2, HIGH);
+  digitalWrite(motorRightPin2, HIGH);// reverses the right motor
 }
-
+// method that makes the car turn left
 void turnLeft() {
   digitalWrite(motorLeftPin1, LOW);
   digitalWrite(motorLeftPin2, HIGH); // Reverse left motor
   digitalWrite(motorRightPin1, HIGH);
   digitalWrite(motorRightPin2, LOW); // Forward right motor
 }
-
+//method that makes the car go right
 void turnRight() {
   digitalWrite(motorLeftPin1, HIGH);
   digitalWrite(motorLeftPin2, LOW); // Forward left motor
